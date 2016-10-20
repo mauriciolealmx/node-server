@@ -17,10 +17,13 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+var clientID = config.prod ? config.prodFacebook_api_key : config.facebook_api_key,
+  clientSecret = config.prod ? config.prodFacebook_api_secret : config.facebook_api_secret;
+
 // Use the FacebookStrategy within Passport.
 passport.use(new FacebookStrategy({
-    clientID: config.facebook_api_key,
-    clientSecret:config.facebook_api_secret ,
+    clientID: clientID,
+    clientSecret: clientSecret,
     callbackURL: config.callback_url,
     profileFields: ['id', 'emails', 'name', 'gender', 'profileUrl', 'photos']
   }, function(accessToken, refreshToken, profile, done) {
