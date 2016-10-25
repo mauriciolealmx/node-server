@@ -1,3 +1,4 @@
+//TOOD: prod env.
 module.exports={
   "facebook_api_key" : "543197432545471",
   "facebook_api_secret" : "4109f5b5114f59a05eae554f3e678dea",  
@@ -9,5 +10,5 @@ module.exports={
   "username" : "root",
   "password" : "",
   "database" : "DB NAME",
-  "prod" : true 
+  "prod" : false 
 }

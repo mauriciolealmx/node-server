@@ -1,0 +1,5 @@
+Stories:
+Create connection to DB
+Create form
+Create post from form to DB
+console.log the users
