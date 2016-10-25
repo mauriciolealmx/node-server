@@ -62,8 +62,19 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
+app.get('/app', function(req, res) {
+  res.render('pages/app-form');
+});
+
+app.post('/app-form-submit', function(req, res) {
+  res.locals.firstName = req.body.firstName;
+  res.locals.email = req.body.email;
+  res.render('pages/app-form-submit');
+});
+
 /*
 * Facebook Login.
+* It only works locally
 */
 app.get('/auth/facebook', passport.authenticate('facebook',{scope:'email'}));
 
