@@ -62,15 +62,18 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
+/*
+* Facebook Login.
+*/
 app.get('/auth/facebook', passport.authenticate('facebook',{scope:'email'}));
 
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { successRedirect : '/checarDatos', failureRedirect: '/login' }),
+  passport.authenticate('facebook', { successRedirect : '/datosFacebook', failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/');
 });
 
-app.get('/checarDatos', function(req, res){
+app.get('/datosFacebook', function(req, res){
 
   console.log(`
     id: ${req.user.id}
@@ -81,11 +84,9 @@ app.get('/checarDatos', function(req, res){
     provider: ${req.user.provider}
   `)
   res.redirect('/');
-});
+}); 
+// <--- Facebook Login Ends --->
 
-app.get('/cool', function(request, response) {
-  response.send(cool());
-});
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

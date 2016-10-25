@@ -10,5 +10,5 @@ module.exports={
   "username" : "root",
   "password" : "",
   "database" : "DB NAME",
-  "prod" : false 
+  "prod" : true 
 }
