@@ -1,5 +1,4 @@
-var cool = require('cool-ascii-faces'),
-  passport = require('passport'),
+var passport = require('passport'),
   FacebookStrategy = require('passport-facebook').Strategy,
   session = require('express-session'),
   cookieParser = require('cookie-parser'),
@@ -67,10 +66,12 @@ app.get('/app', function(req, res) {
 });
 
 app.get('/user', function(req, res) {
-  res.send({
-    'name':'Mauricio',
-    'last':'Leal'
-  });
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(  
+    { 
+      user: 'Mauricio' 
+    }
+  ));
 });
 
 app.post('/app-form-submit', function(req, res) {
