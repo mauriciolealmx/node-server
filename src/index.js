@@ -72,7 +72,6 @@ app.get('/app', function(req, res) {
 
 app.get('/user', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin');
   res.send(JSON.stringify(  
     { 
       user: 'Mauricio' 
