@@ -28,7 +28,8 @@
     "express-session": "1.7.6",
     "mysql": "2.4.3",
     "passport": "0.2.1",
-    "passport-facebook": "latest"
+    "passport-facebook": "latest",
+    "pg": "6.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

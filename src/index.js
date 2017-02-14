@@ -6,7 +6,28 @@ var passport = require('passport'),
   express = require('express'),
   app = express(),
   config = require('../config'),
-  path = require('path');
+  path = require('path'),
+  pg = require('pg');
+
+pg.defaults.ssl = true;
+
+const connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g';
+
+// pg.connect(connectionString, function(err, client) {  // process.env.DATABASE_URL
+//   if (err) throw err;
+//   console.log('Connected to postgres! Getting schemas...');  
+
+//   client
+//     /*
+//     * To get a list of all schemas in postgres database = select * from pg_namespace
+//     */
+//     // .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
+//     // .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') // <= User from heroku credentials.
+//     // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
+//     .on('row', function(row) {
+//       console.log(JSON.stringify(row));
+//     });
+// });
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -64,6 +85,34 @@ app.use(function(req, res, next) {
 
 app.get('/', function(request, response) {
   response.render('pages/index');
+});
+
+app.post('/api/users', (req, res, next) => {
+  const results = [];
+  // Grab data from http request
+  const data = {name: req.body.name};
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({success: false, data: err});
+    }
+    // SQL Query > Insert Data
+    client.query('INSERT INTO users(name) values($1)', [data.name]);
+    // SQL Query > Select Data
+    const query = client.query('SELECT * FROM users ORDER BY id ASC');
+    // Stream results back one row at a time
+    query.on('row', (row) => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
 });
 
 app.get('/app', function(req, res) {
