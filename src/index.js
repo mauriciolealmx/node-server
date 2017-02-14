@@ -66,11 +66,11 @@ app.get('/app', function(req, res) {
   res.render('pages/app-form');
 });
 
-app.get('/json', function(req, res) {
-  res.json({ 
-    name: 'Mauricio',
-    last: 'Leal'
-   });
+app.get('/user', function(req, res) {
+  res.json({
+    'name':'Mauricio',
+    'last':'Leal'
+  });
 });
 
 app.post('/app-form-submit', function(req, res) {
