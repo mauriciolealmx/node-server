@@ -67,7 +67,7 @@ app.get('/app', function(req, res) {
 });
 
 app.get('/user', function(req, res) {
-  res.json({
+  res.send({
     'name':'Mauricio',
     'last':'Leal'
   });
