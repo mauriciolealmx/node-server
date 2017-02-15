@@ -10,5 +10,6 @@ module.exports={
   "username" : "root",
   "password" : "",
   "database" : "DB NAME",
-  "prod" : true 
+  "prod" : true ,
+  "connectionString" : 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g'
 }

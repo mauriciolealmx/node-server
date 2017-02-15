@@ -38,23 +38,11 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var app = (0, _express2.default)();
 
 _pg2.default.defaults.ssl = true;
-var connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g';
-
-// pg.connect(connectionString, function(err, client) {  // process.env.DATABASE_URL
-//   if (err) throw err;
-//   console.log('Connected to postgres! Getting schemas...');  
-
-//   client
-//     /*
-//     * To get a list of all schemas in postgres database = select * from pg_namespace
-//     */
-//     // .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
-//     // .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') // <= User from heroku credentials.
-//     // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
-//     .on('row', function(row) {
-//       console.log(JSON.stringify(row));
-//     });
-// });
+// Query Strings:
+// .query('select * from pg_namespace;') <= get a list of all schemas in postgres database
+// .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
+// .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') //  cnbhxmeyfyjcfp <= User from heroku credentials.
+// .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
 
 _passport2.default.serializeUser(function (user, done) {
   done(null, user);
@@ -95,9 +83,13 @@ app.set('port', process.env.PORT || 5000);
 
 app.use(_express2.default.static(_path2.default.join(__dirname, '../public')));
 
+// view engine setup
 // views is directory for all template files
 app.set('views', _path2.default.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
+app.set('config', _config2.default);
+
+// Middleware
 app.use((0, _cookieParser2.default)());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
 app.use((0, _expressSession2.default)({ secret: 'keyboard cat', key: 'sid' }));
@@ -109,119 +101,11 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Routes
+require('./routes/routes')(app, _express2.default);
+
 app.get('/', function (request, response) {
   response.render('pages/index');
-});
-
-// Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
-app.post('/api/users', function (req, res, next) {
-  var results = [];
-  // Grab data from http request
-  var data = { name: req.body.name };
-  // Get a Postgres client from the connection pool
-  _pg2.default.connect(connectionString, function (err, client, done) {
-    // Handle connection errors
-    if (err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err });
-    }
-    // SQL Query > Insert Data
-    client.query('INSERT INTO users(name) values($1)', [data.name]);
-    // SQL Query > Select Data
-    var query = client.query('SELECT * FROM users ORDER BY id ASC');
-    // Stream results back one row at a time
-    query.on('row', function (row) {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', function () {
-      done();
-      return res.json(results);
-    });
-  });
-});
-
-app.get('/api/users', function (req, res, next) {
-  var results = [];
-  // Get a Postgres client from the connection pool
-  _pg2.default.connect(connectionString, function (err, client, done) {
-    // Handle connection errors
-    if (err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err });
-    }
-    // SQL Query > Select Data
-    var query = client.query('SELECT * FROM users ORDER BY id ASC;');
-    // Stream results back one row at a time
-    query.on('row', function (row) {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', function () {
-      done();
-      return res.json(results);
-    });
-  });
-});
-
-app.put('/api/users/:user_id', function (req, res, next) {
-  var results = [];
-  // Grab data from the URL parameters
-  var id = req.params.user_id;
-  // Grab data from http request
-  var data = { name: req.body.name };
-  // Get a Postgres client from the connection pool
-  _pg2.default.connect(connectionString, function (err, client, done) {
-    // Handle connection errors
-    if (err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err });
-    }
-    // SQL Query > Update Data
-    client.query('UPDATE users SET name=($1) WHERE id=($2)', [data.name, id]);
-    // SQL Query > Select Data
-    var query = client.query("SELECT * FROM users ORDER BY id ASC");
-    // Stream results back one row at a time
-    query.on('row', function (row) {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', function () {
-      done();
-      return res.json(results);
-    });
-  });
-});
-
-app.delete('/api/users/:user_id', function (req, res, next) {
-  var results = [];
-  // Grab data from the URL parameters
-  var id = req.params.user_id;
-  // Get a Postgres client from the connection pool
-  _pg2.default.connect(connectionString, function (err, client, done) {
-    // Handle connection errors
-    if (err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err });
-    }
-    // SQL Query > Delete Data
-    client.query('DELETE FROM users WHERE id=($1)', [id]);
-    // SQL Query > Select Data
-    var query = client.query('SELECT * FROM users ORDER BY id ASC');
-    // Stream results back one row at a time
-    query.on('row', function (row) {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', function () {
-      done();
-      return res.json(results);
-    });
-  });
 });
 
 app.get('/app', function (req, res) {
@@ -262,3 +146,5 @@ app.get('/datosFacebook', function (req, res) {
 app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));
 });
+
+module.exports = app;
