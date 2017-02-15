@@ -116,7 +116,7 @@ app.post('/api/users', (req, res, next) => {
   });
 });
 
-router.get('/api/users', (req, res, next) => {
+app.get('/api/users', (req, res, next) => {
   const results = [];
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, (err, client, done) => {
