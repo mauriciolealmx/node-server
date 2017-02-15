@@ -1,16 +1,16 @@
-var passport = require('passport'),
-  FacebookStrategy = require('passport-facebook').Strategy,
-  session = require('express-session'),
-  cookieParser = require('cookie-parser'),
-  bodyParser = require('body-parser'),
-  express = require('express'),
-  app = express(),
-  config = require('../config'),
-  path = require('path'),
-  pg = require('pg');
+import passport from 'passport';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import express from 'express';
+import config from '../config';
+import path from 'path';
+import pg from 'pg';
+
+let FacebookStrategy = require('passport-facebook').Strategy;
+let app = express();
 
 pg.defaults.ssl = true;
-
 const connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g';
 
 // pg.connect(connectionString, function(err, client) {  // process.env.DATABASE_URL

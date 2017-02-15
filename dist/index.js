@@ -1,17 +1,44 @@
-var passport = require('passport'),
-    FacebookStrategy = require('passport-facebook').Strategy,
-    session = require('express-session'),
-    cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser'),
-    express = require('express'),
-    app = express(),
-    config = require('../config'),
-    path = require('path'),
-    pg = require('pg');
+'use strict';
 
-pg.defaults.ssl = true;
+var _passport = require('passport');
 
-const connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g';
+var _passport2 = _interopRequireDefault(_passport);
+
+var _expressSession = require('express-session');
+
+var _expressSession2 = _interopRequireDefault(_expressSession);
+
+var _cookieParser = require('cookie-parser');
+
+var _cookieParser2 = _interopRequireDefault(_cookieParser);
+
+var _bodyParser = require('body-parser');
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+var _express = require('express');
+
+var _express2 = _interopRequireDefault(_express);
+
+var _config = require('../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _pg = require('pg');
+
+var _pg2 = _interopRequireDefault(_pg);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var FacebookStrategy = require('passport-facebook').Strategy;
+var app = (0, _express2.default)();
+
+_pg2.default.defaults.ssl = true;
+var connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g';
 
 // pg.connect(connectionString, function(err, client) {  // process.env.DATABASE_URL
 //   if (err) throw err;
@@ -29,27 +56,27 @@ const connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe7181
 //     });
 // });
 
-passport.serializeUser(function (user, done) {
+_passport2.default.serializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.deserializeUser(function (obj, done) {
+_passport2.default.deserializeUser(function (obj, done) {
   done(null, obj);
 });
 
-var clientID = config.prod ? config.prodFacebook_api_key : config.facebook_api_key,
-    clientSecret = config.prod ? config.prodFacebook_api_secret : config.facebook_api_secret;
+var clientID = _config2.default.prod ? _config2.default.prodFacebook_api_key : _config2.default.facebook_api_key,
+    clientSecret = _config2.default.prod ? _config2.default.prodFacebook_api_secret : _config2.default.facebook_api_secret;
 
 // Use the FacebookStrategy within Passport.
-passport.use(new FacebookStrategy({
+_passport2.default.use(new FacebookStrategy({
   clientID: clientID,
   clientSecret: clientSecret,
-  callbackURL: config.callback_url,
+  callbackURL: _config2.default.callback_url,
   profileFields: ['id', 'emails', 'name', 'gender', 'profileUrl', 'photos']
 }, function (accessToken, refreshToken, profile, done) {
   process.nextTick(function () {
     //Check whether the User exists or not using profile.id
-    if (config.use_database === 'true') {
+    if (_config2.default.use_database === 'true') {
       connection.query("SELECT * from user_info where user_id=" + profile.id, function (err, rows, fields) {
         if (err) throw err;
         if (rows.length === 0) {
@@ -66,16 +93,16 @@ passport.use(new FacebookStrategy({
 
 app.set('port', process.env.PORT || 5000);
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(_express2.default.static(_path2.default.join(__dirname, '../public')));
 
 // views is directory for all template files
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', _path2.default.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({ secret: 'keyboard cat', key: 'sid' }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use((0, _cookieParser2.default)());
+app.use(_bodyParser2.default.urlencoded({ extended: false }));
+app.use((0, _expressSession2.default)({ secret: 'keyboard cat', key: 'sid' }));
+app.use(_passport2.default.initialize());
+app.use(_passport2.default.session());
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -87,12 +114,12 @@ app.get('/', function (request, response) {
 });
 
 // Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
-app.post('/api/users', (req, res, next) => {
-  const results = [];
+app.post('/api/users', function (req, res, next) {
+  var results = [];
   // Grab data from http request
-  const data = { name: req.body.name };
+  var data = { name: req.body.name };
   // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
+  _pg2.default.connect(connectionString, function (err, client, done) {
     // Handle connection errors
     if (err) {
       done();
@@ -102,63 +129,9 @@ app.post('/api/users', (req, res, next) => {
     // SQL Query > Insert Data
     client.query('INSERT INTO users(name) values($1)', [data.name]);
     // SQL Query > Select Data
-    const query = client.query('SELECT * FROM users ORDER BY id ASC');
+    var query = client.query('SELECT * FROM users ORDER BY id ASC');
     // Stream results back one row at a time
-    query.on('row', row => {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', () => {
-      done();
-      return res.json(results);
-    });
-  });
-});
-
-app.get('/api/users', (req, res, next) => {
-  const results = [];
-  // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
-    // Handle connection errors
-    if (err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err });
-    }
-    // SQL Query > Select Data
-    const query = client.query('SELECT * FROM users ORDER BY id ASC;');
-    // Stream results back one row at a time
-    query.on('row', row => {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', () => {
-      done();
-      return res.json(results);
-    });
-  });
-});
-
-app.put('/api/users/:user_id', (req, res, next) => {
-  const results = [];
-  // Grab data from the URL parameters
-  const id = req.params.user_id;
-  // Grab data from http request
-  const data = { name: req.body.name };
-  // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
-    // Handle connection errors
-    if (err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err });
-    }
-    // SQL Query > Update Data
-    client.query('UPDATE users SET name=($1) WHERE id=($2)', [data.name, id]);
-    // SQL Query > Select Data
-    const query = client.query("SELECT * FROM users ORDER BY id ASC");
-    // Stream results back one row at a time
-    query.on('row', row => {
+    query.on('row', function (row) {
       results.push(row);
     });
     // After all data is returned, close connection and return results
@@ -169,12 +142,66 @@ app.put('/api/users/:user_id', (req, res, next) => {
   });
 });
 
-app.delete('/api/users/:user_id', (req, res, next) => {
-  const results = [];
-  // Grab data from the URL parameters
-  const id = req.params.user_id;
+app.get('/api/users', function (req, res, next) {
+  var results = [];
   // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
+  _pg2.default.connect(connectionString, function (err, client, done) {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Select Data
+    var query = client.query('SELECT * FROM users ORDER BY id ASC;');
+    // Stream results back one row at a time
+    query.on('row', function (row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function () {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+app.put('/api/users/:user_id', function (req, res, next) {
+  var results = [];
+  // Grab data from the URL parameters
+  var id = req.params.user_id;
+  // Grab data from http request
+  var data = { name: req.body.name };
+  // Get a Postgres client from the connection pool
+  _pg2.default.connect(connectionString, function (err, client, done) {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Update Data
+    client.query('UPDATE users SET name=($1) WHERE id=($2)', [data.name, id]);
+    // SQL Query > Select Data
+    var query = client.query("SELECT * FROM users ORDER BY id ASC");
+    // Stream results back one row at a time
+    query.on('row', function (row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function () {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+app.delete('/api/users/:user_id', function (req, res, next) {
+  var results = [];
+  // Grab data from the URL parameters
+  var id = req.params.user_id;
+  // Get a Postgres client from the connection pool
+  _pg2.default.connect(connectionString, function (err, client, done) {
     // Handle connection errors
     if (err) {
       done();
@@ -186,11 +213,11 @@ app.delete('/api/users/:user_id', (req, res, next) => {
     // SQL Query > Select Data
     var query = client.query('SELECT * FROM users ORDER BY id ASC');
     // Stream results back one row at a time
-    query.on('row', row => {
+    query.on('row', function (row) {
       results.push(row);
     });
     // After all data is returned, close connection and return results
-    query.on('end', () => {
+    query.on('end', function () {
       done();
       return res.json(results);
     });
@@ -218,22 +245,15 @@ app.post('/app-form-submit', function (req, res) {
 * Facebook Login.
 * It only works locally
 */
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+app.get('/auth/facebook', _passport2.default.authenticate('facebook', { scope: 'email' }));
 
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/datosFacebook', failureRedirect: '/login' }), function (req, res) {
+app.get('/auth/facebook/callback', _passport2.default.authenticate('facebook', { successRedirect: '/datosFacebook', failureRedirect: '/login' }), function (req, res) {
   res.redirect('/');
 });
 
 app.get('/datosFacebook', function (req, res) {
 
-  console.log(`
-    id: ${req.user.id}
-    name: ${req.user.name.givenName}
-    middle name: ${req.user.name.middleName}
-    family name: ${req.user.name.familyName}
-    emails: ${req.user.emails[0].value}
-    provider: ${req.user.provider}
-  `);
+  console.log('\n    id: ' + req.user.id + '\n    name: ' + req.user.name.givenName + '\n    middle name: ' + req.user.name.middleName + '\n    family name: ' + req.user.name.familyName + '\n    emails: ' + req.user.emails[0].value + '\n    provider: ' + req.user.provider + '\n  ');
   res.redirect('/');
 });
 // <--- Facebook Login Ends --->
