@@ -1,5 +1,4 @@
-var cool = require('cool-ascii-faces'),
-    passport = require('passport'),
+var passport = require('passport'),
     FacebookStrategy = require('passport-facebook').Strategy,
     session = require('express-session'),
     cookieParser = require('cookie-parser'),
@@ -7,7 +6,28 @@ var cool = require('cool-ascii-faces'),
     express = require('express'),
     app = express(),
     config = require('../config'),
-    path = require('path');
+    path = require('path'),
+    pg = require('pg');
+
+pg.defaults.ssl = true;
+
+const connectionString = 'postgres://cnbhxmeyfyjcfp:a4553501856b8d1c75ffcebe71813d7944a450951000001d4338ae18c82996cf@ec2-23-23-186-157.compute-1.amazonaws.com:5432/ddl66s5tol0c9g';
+
+// pg.connect(connectionString, function(err, client) {  // process.env.DATABASE_URL
+//   if (err) throw err;
+//   console.log('Connected to postgres! Getting schemas...');  
+
+//   client
+//     /*
+//     * To get a list of all schemas in postgres database = select * from pg_namespace
+//     */
+//     // .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
+//     // .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') // <= User from heroku credentials.
+//     // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
+//     .on('row', function(row) {
+//       console.log(JSON.stringify(row));
+//     });
+// });
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -56,18 +76,142 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: 'keyboard cat', key: 'sid' }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.get('/', function (request, response) {
   response.render('pages/index');
 });
 
+// Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
+app.post('/api/users', (req, res, next) => {
+  const results = [];
+  // Grab data from http request
+  const data = { name: req.body.name };
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Insert Data
+    client.query('INSERT INTO users(name) values($1)', [data.name]);
+    // SQL Query > Select Data
+    const query = client.query('SELECT * FROM users ORDER BY id ASC');
+    // Stream results back one row at a time
+    query.on('row', row => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+app.get('/api/users', (req, res, next) => {
+  const results = [];
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Select Data
+    const query = client.query('SELECT * FROM users ORDER BY id ASC;');
+    // Stream results back one row at a time
+    query.on('row', row => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+app.put('/api/users/:user_id', (req, res, next) => {
+  const results = [];
+  // Grab data from the URL parameters
+  const id = req.params.user_id;
+  // Grab data from http request
+  const data = { name: req.body.name };
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Update Data
+    client.query('UPDATE users SET name=($1) WHERE id=($2)', [data.name, id]);
+    // SQL Query > Select Data
+    const query = client.query("SELECT * FROM users ORDER BY id ASC");
+    // Stream results back one row at a time
+    query.on('row', row => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function () {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
+app.delete('/api/users/:user_id', (req, res, next) => {
+  const results = [];
+  // Grab data from the URL parameters
+  const id = req.params.user_id;
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, (err, client, done) => {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Delete Data
+    client.query('DELETE FROM users WHERE id=($1)', [id]);
+    // SQL Query > Select Data
+    var query = client.query('SELECT * FROM users ORDER BY id ASC');
+    // Stream results back one row at a time
+    query.on('row', row => {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', () => {
+      done();
+      return res.json(results);
+    });
+  });
+});
+
 app.get('/app', function (req, res) {
-  console.log('Yup, you are doing things right', req.body.firstName);
   res.render('pages/app-form');
 });
 
+app.get('/user', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify({
+    user: 'Mauricio'
+  }));
+});
+
 app.post('/app-form-submit', function (req, res) {
-  res.render('pages/app-form');
+  res.locals.firstName = req.body.firstName;
+  res.locals.email = req.body.email;
+  res.render('pages/app-form-submit');
 });
 
 /*
@@ -83,12 +227,12 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRe
 app.get('/datosFacebook', function (req, res) {
 
   console.log(`
-    id: ${ req.user.id }
-    name: ${ req.user.name.givenName }
-    middle name: ${ req.user.name.middleName }
-    family name: ${ req.user.name.familyName }
-    emails: ${ req.user.emails[0].value }
-    provider: ${ req.user.provider }
+    id: ${req.user.id}
+    name: ${req.user.name.givenName}
+    middle name: ${req.user.name.middleName}
+    family name: ${req.user.name.familyName}
+    emails: ${req.user.emails[0].value}
+    provider: ${req.user.provider}
   `);
   res.redirect('/');
 });
