@@ -5,18 +5,9 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import config from '../config';
 import path from 'path';
-import pg from 'pg';
 
 let FacebookStrategy = require('passport-facebook').Strategy;
 let app = express();
-
-// PostgreSQL 
-pg.defaults.ssl = true;
-  // Query Strings:
-    // .query('select * from pg_namespace;') <= get a list of all schemas in postgres database
-    // .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
-    // .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') //  cnbhxmeyfyjcfp <= User from heroku credentials.
-    // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
 
 passport.serializeUser(function(user, done) {
   done(null, user);
