@@ -74,8 +74,6 @@ app.get('/', function(request, response) {
   response.render('pages/index');
 });
 
-
-
 app.get('/app', function(req, res) {
   res.render('pages/app-form');
 });
@@ -120,7 +118,6 @@ app.get('/datosFacebook', function(req, res){
   res.redirect('/');
 }); 
 // <--- Facebook Login Ends --->
-
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
