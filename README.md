@@ -1,6 +1,9 @@
-# node-js-getting-started
+# Node-js-REST-API
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+A Node.js app using [Express 4](http://expressjs.com/). 
+This app contains the four basic CRUD operations. 
+host: https://mleal-heroku-app.herokuapp.com  
+uri: ```/api/users```
 
 This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
