@@ -28,21 +28,10 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _pg = require('pg');
-
-var _pg2 = _interopRequireDefault(_pg);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var FacebookStrategy = require('passport-facebook').Strategy;
 var app = (0, _express2.default)();
-
-_pg2.default.defaults.ssl = true;
-// Query Strings:
-// .query('select * from pg_namespace;') <= get a list of all schemas in postgres database
-// .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
-// .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') //  cnbhxmeyfyjcfp <= User from heroku credentials.
-// .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
 
 _passport2.default.serializeUser(function (user, done) {
   done(null, user);
@@ -141,7 +130,6 @@ app.get('/datosFacebook', function (req, res) {
   res.redirect('/');
 });
 // <--- Facebook Login Ends --->
-
 
 app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));

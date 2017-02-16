@@ -13,6 +13,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var connectionString = _config2.default.connectionString;
 
 module.exports = function (app, express) {
+
+  // PostgreSQL 
+  _pg2.default.defaults.ssl = true;
+  // Query Strings:
+  // .query('select * from pg_namespace;') <= get a list of all schemas in postgres database
+  // .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
+  // .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') //  cnbhxmeyfyjcfp <= User from heroku credentials.
+  // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
+
   // Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
   app.post('/api/users', function (req, res, next) {
     var results = [];
