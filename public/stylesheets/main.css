@@ -1,27 +1,95 @@
 .jumbotron {
   background: #532F8C;
   color: white;
-  padding-bottom: 80px; }
-  .jumbotron .btn-primary {
+  padding-bottom: 80px; 
+}
+.jumbotron .btn-primary {
     background: #845ac7;
-    border-color: #845ac7; }
-    .jumbotron .btn-primary:hover {
-      background: #7646c1; }
-  .jumbotron p {
-    color: #d9ccee;
-    max-width: 75%;
-    margin: 1em auto 2em; }
-  .navbar + .jumbotron {
-    margin-top: -20px; }
-  .jumbotron .lang-logo {
-    display: block;
-    background: #B01302;
-    border-radius: 50%;
-    overflow: hidden;
-    width: 100px;
-    height: 100px;
-    margin: auto;
-    border: 2px solid white; }
-    .jumbotron .lang-logo img {
-      max-width: 100%; }
+    border-color: #845ac7; 
+}
+.jumbotron .btn-primary:hover {
+      background: #7646c1; 
+}
+.jumbotron p {
+  color: #d9ccee;
+  max-width: 75%;
+  margin: 1em auto 2em; 
+}
+.navbar + .jumbotron {
+  margin-top: -20px; 
+}
+.jumbotron .lang-logo {
+  display: block;
+  background: #B01302;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  margin: auto;
+  border: 2px solid white; 
+}
+.jumbotron .lang-logo img {
+  max-width: 100%; 
+}
+
+/*
+* Mobile first
+*/
+.profile-logo {
+  width: 110px;
+  color: white;
+  font-family: initial;
+}
+.position-relative {
+  position: relative;
+
+}
+.position-relative h1 {
+  color: white;
+  margin: auto 25px;
+  display: inline-block;
+}
+/*
+* Pruebas fa-icons
+*/
+.fa-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  float: right;
+  text-align: center;
+  margin: auto 10px;
+}
+.fa-wrapper .font-size-22 {
+  font-size: 22px; 
+}
+.fa-wrapper > * {
+  height: auto;
+  width: 50px;
+  color: #9d9d9d;
+  padding: 14px;
+  flex-grow: 1;
+}
+.fa-wrapper > *:hover {
+  color: white;
+}
+ul li {
+  list-style-type: none;
+}
+
+/*
+* Small devices and up.
+*/
+@media (min-width: 768px) {
+  .position-relative {
+    position: relative;
+
+  }
+  .position-relative h1 {
+    margin: auto 39px;
+  }
+  .fa-wrapper {
+    margin: auto 62px;
+  }
+}
 
