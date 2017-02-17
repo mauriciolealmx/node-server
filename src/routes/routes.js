@@ -12,6 +12,15 @@ module.exports = function (app, express) {
       // .query('SELECT table_schema, table_name FROM information_schema.tables;') <= Ejemplo de Heroku.
       // .query('CREATE SCHEMA schema_mleal AUTHORIZATION cnbhxmeyfyjcfp;') //  cnbhxmeyfyjcfp <= User from heroku credentials.
       // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
+
+  app.get('/api', function(req, res) {
+    res.render('pages/api');
+  });
+
+  app.post('/chocolate', function(req, res) {
+    console.log('req.body.value ', req.body.name);
+    res.render('pages/api');
+  });
       
   // Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
   app.post('/api/users', (req, res, next) => {
