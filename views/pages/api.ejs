@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body>
+    <% include ../partials/nav.ejs %>
+    <div class="container">
+      <div>
+        <h2>Users API</h2>
+        <p>This API provides your basic DRUD operations over a PostgreSQL Database.</p>
+      </div>
+      <div>
+        <h4>Resource URL</h4>
+        <code>GET https://mleal-heroku-app.herokuapp.com/api/users</code>
+      </div>
+      <div>
+        <h4>Sample Response:</h4>
+        <code>
+          <pre>
+      [
+          {
+              "id": 1,
+              "name": "Mauricio"
+          },
+          {
+              "id": 2,
+              "name": "Andres"
+          },
+          {
+              "id": 3,
+              "name": "Marian"
+          }
+      ]</pre>
+      </code>
+      </div>
+      <H4>Try the API with the following UI:</H4>
+
+      <form action="/chocolate" method="post">
+        <input type="text" name="name" placeholder="Your Name">
+        <input type="submit" name="POST" value="Create">
+        <input type="submit" name="GET" value="Retrieve">
+        <input type="submit" name="PUT" value="Update">
+        <input type="submit" name="DELETE" value="Delete">
+      </form>
+
+
+    </div>
+  </body>
+</html>
+
