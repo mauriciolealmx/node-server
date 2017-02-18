@@ -16,7 +16,7 @@
       </div>
       <div>
         <h4>Sample Response:</h4>
-        <code>
+        <code style="background-color: white;">
           <pre>
       [
           {
@@ -34,15 +34,16 @@
       ]</pre>
       </code>
       </div>
-      <H4>Try the API with the following UI:</H4>
-
-      <form action="/chocolate" method="post">
-        <input type="text" name="name" placeholder="Your Name">
-        <input type="submit" name="POST" value="Create">
-        <input type="submit" name="GET" value="Retrieve">
-        <input type="submit" name="PUT" value="Update">
-        <input type="submit" name="DELETE" value="Delete">
-      </form>
+      <div style="margin-bottom: 40px;">
+        <H4>Try the API with the following UI:</H4>
+        <form action="/chocolate" method="post">
+          <input type="text" name="user" placeholder="Your Name">
+          <input type="submit" name="action" value="POST">
+          <input type="submit" name="action" value="GET">
+          <input type="submit" name="action" value="PUT">
+          <input type="submit" name="action" value="DELETE">
+        </form>
+      </div>      
 
 
     </div>
