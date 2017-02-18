@@ -50,12 +50,12 @@ module.exports = function (app, express) {
     res.render('pages/api');
   });
       
-  // Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
+  // Verify functionallity with curl like so: curl --data "user=test" http://127.0.0.1:5000/api/users
   app.post('/api/users', (req, res) => {
     createUser(req, res);
   });
 
-  app.get('/api/users', (req, res, next) => {
+  app.get('/api/users', (req, res) => {
     const results = [];
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
@@ -84,7 +84,7 @@ module.exports = function (app, express) {
     // Grab data from the URL parameters
     const id = req.params.user_id;
     // Grab data from http request
-    const data = {name: req.body.name};
+    const data = {name: req.body.user};
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, (err, client, done) => {
       // Handle connection errors
