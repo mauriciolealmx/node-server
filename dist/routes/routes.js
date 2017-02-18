@@ -55,15 +55,14 @@ module.exports = function (app, express) {
   });
 
   app.post('/chocolate', function (req, res) {
-    console.log('req.body.action ', req.body.verb);
+    console.log('req.body.action ', req.body.action);
     console.log('req.body.user ', req.body.user);
-    if (req.body.verb === 'POST') {
+    if (req.body.action === 'POST') {
       createUser(req, res);
     }
-    res.redirect('/api');
   });
 
-  // Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
+  // Verify functionallity with curl like so: curl --data "user=test" http://127.0.0.1:5000/api/users
   app.post('/api/users', function (req, res) {
     createUser(req, res);
   });
