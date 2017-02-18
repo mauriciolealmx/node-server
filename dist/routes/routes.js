@@ -12,6 +12,34 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var connectionString = _config2.default.connectionString;
 
+var createUser = function createUser(req, res) {
+  var results = [];
+  // Grab data from http request
+  var data = { name: req.body.user };
+  // Get a Postgres client from the connection pool
+  _pg2.default.connect(connectionString, function (err, client, done) {
+    // Handle connection errors
+    if (err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err });
+    }
+    // SQL Query > Insert Data
+    client.query('INSERT INTO users(name) values($1)', [data.name]);
+    // SQL Query > Select Data
+    var query = client.query('SELECT * FROM users ORDER BY id ASC');
+    // Stream results back one row at a time
+    query.on('row', function (row) {
+      results.push(row);
+    });
+    // After all data is returned, close connection and return results
+    query.on('end', function () {
+      done();
+      return res.json(results);
+    });
+  });
+};
+
 module.exports = function (app, express) {
 
   // PostgreSQL 
@@ -27,40 +55,20 @@ module.exports = function (app, express) {
   });
 
   app.post('/chocolate', function (req, res) {
-    console.log('req.body.value ', req.body.name);
-    res.render('pages/api');
+    console.log('req.body.action ', req.body.verb);
+    console.log('req.body.user ', req.body.user);
+    if (req.body.verb === 'POST') {
+      createUser(req, res);
+    }
+    res.redirect('/api');
   });
 
   // Verify functionallity with curl like so: curl --data "name=test" http://127.0.0.1:5000/api/users
-  app.post('/api/users', function (req, res, next) {
-    var results = [];
-    // Grab data from http request
-    var data = { name: req.body.name };
-    // Get a Postgres client from the connection pool
-    _pg2.default.connect(connectionString, function (err, client, done) {
-      // Handle connection errors
-      if (err) {
-        done();
-        console.log(err);
-        return res.status(500).json({ success: false, data: err });
-      }
-      // SQL Query > Insert Data
-      client.query('INSERT INTO users(name) values($1)', [data.name]);
-      // SQL Query > Select Data
-      var query = client.query('SELECT * FROM users ORDER BY id ASC');
-      // Stream results back one row at a time
-      query.on('row', function (row) {
-        results.push(row);
-      });
-      // After all data is returned, close connection and return results
-      query.on('end', function () {
-        done();
-        return res.json(results);
-      });
-    });
+  app.post('/api/users', function (req, res) {
+    createUser(req, res);
   });
 
-  app.get('/api/users', function (req, res, next) {
+  app.get('/api/users', function (req, res) {
     var results = [];
     // Get a Postgres client from the connection pool
     _pg2.default.connect(connectionString, function (err, client, done) {
@@ -89,7 +97,7 @@ module.exports = function (app, express) {
     // Grab data from the URL parameters
     var id = req.params.user_id;
     // Grab data from http request
-    var data = { name: req.body.name };
+    var data = { name: req.body.user };
     // Get a Postgres client from the connection pool
     _pg2.default.connect(connectionString, function (err, client, done) {
       // Handle connection errors
