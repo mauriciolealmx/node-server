@@ -46,8 +46,12 @@ module.exports = function (app, express) {
   });
 
   app.post('/chocolate', function(req, res) {
-    console.log('req.body.value ', req.body.name);
-    res.render('pages/api');
+    console.log('req.body.action ', req.body.verb);
+    console.log('req.body.user ', req.body.user);
+    if (req.body.verb === 'POST') {
+      createUser(req, res);
+    }
+    res.redirect('/api');
   });
       
   // Verify functionallity with curl like so: curl --data "user=test" http://127.0.0.1:5000/api/users
