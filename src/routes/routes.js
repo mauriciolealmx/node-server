@@ -1,32 +1,35 @@
 import config from '../../config';
 import pg from 'pg';
+import Promise from 'bluebird';
 
 const connectionString = config.connectionString;
 
 let createUser = (req, res) => {
-  const results = [];
-  // Grab data from http request
-  const data = {name: req.body.user};
-  // Get a Postgres client from the connection pool
-  pg.connect(connectionString, (err, client, done) => {
-    // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({success: false, data: err});
-    }
-    // SQL Query > Insert Data
-    client.query('INSERT INTO users(name) values($1)', [data.name]);
-    // SQL Query > Select Data
-    const query = client.query('SELECT * FROM users ORDER BY id ASC');
-    // Stream results back one row at a time
-    query.on('row', (row) => {
-      results.push(row);
-    });
-    // After all data is returned, close connection and return results
-    query.on('end', () => {
-      done();
-      return res.json(results);
+  return new Promise(function(resolve, reject) {
+    const results = [];
+    // Grab data from http request
+    const data = {name: req.body.user};
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+      // Handle connection errors
+      if(err) {
+        done();
+        console.log(err);
+        return res.status(500).json({success: false, data: err});
+      }
+      // SQL Query > Insert Data
+      client.query('INSERT INTO users(name) values($1)', [data.name]);
+      // SQL Query > Select Data
+      const query = client.query('SELECT * FROM users ORDER BY id ASC');
+      // Stream results back one row at a time
+      query.on('row', (row) => {
+        results.push(row);
+      });
+      // After all data is returned, close connection and return results
+      query.on('end', () => {
+        done();
+        return resolve(JSON.stringify(results));
+      });
     });
   });
 };
@@ -42,6 +45,7 @@ module.exports = function (app, express) {
       // .query('CREATE TABLE users(id SERIAL PRIMARY KEY, name VARCHAR(15) not null)') <= Created users table.
 
   app.get('/api', function(req, res) {
+    res.locals.results = undefined;
     res.render('pages/api');
   });
 
@@ -49,13 +53,19 @@ module.exports = function (app, express) {
     console.log('req.body.action ', req.body.action);
     console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
-      createUser(req, res);
+      // TODO: Try Promise.resolve(response);
+      createUser(req, res).then( (response) => {
+        res.locals.results = response;
+        res.render('pages/api');
+      });
     }
   });
       
   // Verify functionallity with curl like so: curl --data "user=test" http://127.0.0.1:5000/api/users
   app.post('/api/users', (req, res) => {
-    createUser(req, res);
+    createUser(req, res).then(function(response) {
+      return res.json(response);
+    })
   });
 
   app.get('/api/users', (req, res) => {
