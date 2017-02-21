@@ -44,7 +44,13 @@
           <input type="submit" name="action" value="PUT">
           <input type="submit" name="action" value="DELETE">
         </form>
-      </div>      
+        <% if (results) { %>
+        <ul style="padding-left: 0px;">
+          <li>Your id: <%= results.id %></li>
+          <li>Saved Name: <%= results.name %></li>
+        </div>
+        <% } %>
+      </ul>      
 
 
     </div>
