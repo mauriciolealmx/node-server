@@ -40,7 +40,7 @@ var createUser = function createUser(req, res) {
       // After all data is returned, close connection and return results
       query.on('end', function () {
         done();
-        return resolve(JSON.stringify(results));
+        return resolve(results);
       });
     });
   });
@@ -65,9 +65,8 @@ module.exports = function (app, express) {
     console.log('req.body.action ', req.body.action);
     console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
-      // TODO: Try Promise.resolve(response);
       createUser(req, res).then(function (response) {
-        res.locals.results = response;
+        res.locals.results = response[response.length - 1];
         res.render('pages/api');
       });
     }

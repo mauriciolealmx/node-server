@@ -28,7 +28,7 @@ let createUser = (req, res) => {
       // After all data is returned, close connection and return results
       query.on('end', () => {
         done();
-        return resolve(JSON.stringify(results));
+        return resolve(results);
       });
     });
   });
