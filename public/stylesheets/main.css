@@ -1,3 +1,10 @@
+code.uri{
+  display: block;
+  width: 14%;
+  margin: 0px auto;
+  font-size: 80%;
+}
+
 .jumbotron {
   background: #532F8C;
   color: white;
@@ -12,7 +19,7 @@
 }
 .jumbotron p {
   color: #d9ccee;
-  max-width: 75%;
+  max-width: 85%;
   margin: 1em auto 2em; 
 }
 .navbar + .jumbotron {
@@ -93,6 +100,10 @@ ul li {
   }
   .fa-wrapper {
     margin: auto 62px;
+  }
+  a.users.api {
+    text-decoration: none;
+    color: #d9ccee;
   }
 }
 
