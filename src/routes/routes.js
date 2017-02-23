@@ -72,10 +72,13 @@ module.exports = function (app, express) {
 
   app.get('/api', function(req, res) {
     res.locals.results = undefined;
+    res.locals.maxResults = undefined;
     res.render('pages/api');
   });
 
   app.post('/api', function(req, res) {
+    res.locals.maxResults = undefined;
+
     console.log('req.body.action ', req.body.action);
     console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
@@ -88,7 +91,13 @@ module.exports = function (app, express) {
     }  
     if (req.body.action === 'GET') {
       getUsers(req, res).then( (response) => {
-        res.locals.results = response;
+        const MAX_RESULTS_TO_SHOW = 10;
+
+        let block = [0, MAX_RESULTS_TO_SHOW];
+        let slicedResponse = response.slice(...block);
+
+        res.locals.maxResults = MAX_RESULTS_TO_SHOW;
+        res.locals.results = slicedResponse;
         res.render('pages/api');
       });
     }

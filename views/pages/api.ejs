@@ -44,7 +44,10 @@
           <input type="submit" name="action" value="GET">
           <input type="submit" name="action" value="PUT">
           <input type="submit" name="action" value="DELETE">
-        </form>
+        </form><br>
+        <% if (maxResults) { %>
+          <p>GET will only show first <%= maxResults %> users.</p>
+        <% } %>
         <% if (results) { %>
           <ul style="padding-left: 0px;">
             <% results.forEach(function(result){ %>
