@@ -46,10 +46,12 @@
           <input type="submit" name="action" value="DELETE">
         </form>
         <% if (results) { %>
-        <ul style="padding-left: 0px;">
-          <li>Your id: <%= results.id %></li>
-          <li>Saved Name: <%= results.name %></li>
-        </div>
+          <ul style="padding-left: 0px;">
+            <% results.forEach(function(result){ %>
+              <li>Your id: <%= result.id %></li>
+              <li>Saved Name: <%= result.name %></li><br>
+            <% }); %>
+          </ul>
         <% } %>
       </ul>      
 
