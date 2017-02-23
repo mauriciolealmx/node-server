@@ -33,6 +33,32 @@ let createUser = (req, res) => {
     });
   });
 };
+let getUsers = () => {
+  return new Promise(function(resolve, reject) {
+
+    const results = [];
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+      // Handle connection errors
+      if(err) {
+        done();
+        console.log(err);
+        return res.status(500).json({success: false, data: err});
+      }
+      // SQL Query > Select Data
+      const query = client.query('SELECT * FROM users ORDER BY id ASC;');
+      // Stream results back one row at a time
+      query.on('row', (row) => {
+        results.push(row);
+      });
+      // After all data is returned, close connection and return results
+      query.on('end', () => {
+        done();
+        return resolve(results);
+      });
+    });
+  });
+};
 
 module.exports = function (app, express) {
 
@@ -54,7 +80,15 @@ module.exports = function (app, express) {
     console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
       createUser(req, res).then( (response) => {
-        res.locals.results = response[response.length - 1];
+        let lastUser = [];
+        lastUser.push(response.pop());
+        res.locals.results = lastUser;
+        res.render('pages/api');
+      });
+    }  
+    if (req.body.action === 'GET') {
+      getUsers(req, res).then( (response) => {
+        res.locals.results = response;
         res.render('pages/api');
       });
     }
@@ -68,26 +102,8 @@ module.exports = function (app, express) {
   });
 
   app.get('/api/users', (req, res) => {
-    const results = [];
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-      // Handle connection errors
-      if(err) {
-        done();
-        console.log(err);
-        return res.status(500).json({success: false, data: err});
-      }
-      // SQL Query > Select Data
-      const query = client.query('SELECT * FROM users ORDER BY id ASC;');
-      // Stream results back one row at a time
-      query.on('row', (row) => {
-        results.push(row);
-      });
-      // After all data is returned, close connection and return results
-      query.on('end', () => {
-        done();
-        return res.json(results);
-      });
+    getUsers().then(function(response) {
+      return res.json(response);
     });
   });
 
