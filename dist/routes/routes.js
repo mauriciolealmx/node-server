@@ -61,7 +61,7 @@ module.exports = function (app, express) {
     res.render('pages/api');
   });
 
-  app.post('/chocolate', function (req, res) {
+  app.post('/api', function (req, res) {
     console.log('req.body.action ', req.body.action);
     console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
