@@ -79,25 +79,29 @@
     </div>
     <% include ../partials/scripts.ejs %>
     <script>
-      var post = $('#button-post');
+      let post = $('#button-post');
 
       let updateResult = (id, name) => {
         let $output = $('#output');
         $output.text(`You just changed user with id:${id} to ${name}`);
       }
 
+      let getValue = (selector) => {
+        return $(selector).val();
+      }
+
       post.on('click', function(e) {
         e.preventDefault();
-        let id = $('input[name="id"]').val();
         let user = $('input[name="user-name"]').val();
-        console.log(`${id}/${user}`);
+        id = $('input[name="id"]').val();
+
         fetch(`https://mleal-heroku-app.herokuapp.com/api/users/${id}/${user}`, {
           method: 'POST'
         })
-        .then(response => response.json() )
+        .then( response => response.json() )
         .then( json => {
-          let updatedUser = json.find( element => element.id === 100);
-          let id = updatedUser.id;
+          let id = getValue('input[name="id"]');
+          let updatedUser = json.find( (element) => element.id === +id);
           let name = updatedUser.name;
           return updateResult(id, name);
         });
