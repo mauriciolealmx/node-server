@@ -59,6 +59,39 @@ let getUsers = () => {
     });
   });
 };
+let updateUser = (req, res) => {
+  return new Promise(function(resolve, reject) {
+    const results = [];
+    // Grab data from the URL parameters
+    const id = req.params.user_id;
+    const name = req.params.user_name;
+    const data = {name};
+    // Grab data from http request
+    // Get a Postgres client from the connection pool
+    pg.connect(connectionString, (err, client, done) => {
+      // Handle connection errors
+      if(err) {
+        done();
+        console.log(err);
+        return res.status(500).json({success: false, data: err});
+      }
+      // SQL Query > Update Data
+      client.query('UPDATE users SET name=($1) WHERE id=($2)',
+      [data.name, id]);
+      // SQL Query > Select Data
+      const query = client.query("SELECT * FROM users ORDER BY id ASC");
+      // Stream results back one row at a time
+      query.on('row', (row) => {
+        results.push(row);
+      });
+      // After all data is returned, close connection and return results
+      query.on('end', function() {
+        done();
+        return resolve(results);
+      });
+    });
+  });
+}
 
 module.exports = function (app, express) {
 
@@ -78,9 +111,6 @@ module.exports = function (app, express) {
 
   app.post('/api', function(req, res) {
     res.locals.maxResults = undefined;
-
-    console.log('req.body.action ', req.body.action);
-    console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
       createUser(req, res).then( (response) => {
         let lastUser = [];
@@ -116,34 +146,11 @@ module.exports = function (app, express) {
     });
   });
 
-  app.put('/api/users/:user_id', (req, res, next) => {
-    const results = [];
-    // Grab data from the URL parameters
+  app.put('/api/users/:user_id/:user_name', (req, res, next) => {
     const id = req.params.user_id;
-    // Grab data from http request
-    const data = {name: req.body.user};
-    // Get a Postgres client from the connection pool
-    pg.connect(connectionString, (err, client, done) => {
-      // Handle connection errors
-      if(err) {
-        done();
-        console.log(err);
-        return res.status(500).json({success: false, data: err});
-      }
-      // SQL Query > Update Data
-      client.query('UPDATE users SET name=($1) WHERE id=($2)',
-      [data.name, id]);
-      // SQL Query > Select Data
-      const query = client.query("SELECT * FROM users ORDER BY id ASC");
-      // Stream results back one row at a time
-      query.on('row', (row) => {
-        results.push(row);
-      });
-      // After all data is returned, close connection and return results
-      query.on('end', function() {
-        done();
-        return res.json(results);
-      });
+
+    updateUser(req, res).then( (response) => {
+      return res.json(response);
     });
   });
 
