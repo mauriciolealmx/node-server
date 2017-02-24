@@ -48,7 +48,7 @@
         </form><br>
 
 
-        <form method="get">
+        <form>
           <input 
             class="form-control" 
             style="display: inline-block; width: 15%;"
@@ -56,7 +56,7 @@
           <input 
             class="form-control" 
             style="display: inline-block; width: 15%;"
-            type="text"  name="user" placeholder="Name">
+            type="text"  name="user-name" placeholder="Name">
           <button id="button-post" class="btn">POST</button>
           <button id="button-delete" class="btn" disabled>DELETE</button>
           <output id=output></output>
@@ -88,10 +88,11 @@
 
       post.on('click', function(e) {
         e.preventDefault();
-        let id = $('body > div > div:nth-child(4) > form:nth-child(5) > input:nth-child(1)').val();
-        let user = $('body > div > div:nth-child(4) > form:nth-child(5) > input:nth-child(2)').val();
-        fetch(`https://mleal-heroku-app.herokuapp.com/api/api/users/${id}/${user}`, {
-          method: 'PUT',
+        let id = $('input[name="id"]').val();
+        let user = $('input[name="user-name"]').val();
+        console.log(`${id}/${user}`);
+        fetch(`http://mleal-heroku-app.herokuapp.com/api/users/${id}/${user}`, {
+          method: 'POST'
         })
         .then(response => response.json() )
         .then( json => {
@@ -99,7 +100,7 @@
           let id = updatedUser.id;
           let name = updatedUser.name;
           return updateResult(id, name);
-        })
+        });
       });
     </script>
   </body>

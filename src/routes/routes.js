@@ -146,7 +146,7 @@ module.exports = function (app, express) {
     });
   });
 
-  app.put('/api/users/:user_id/:user_name', (req, res, next) => {
+  app.post('/api/users/:user_id/:user_name', (req, res, next) => {
     const id = req.params.user_id;
 
     updateUser(req, res).then( (response) => {
