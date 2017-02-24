@@ -90,7 +90,7 @@
         e.preventDefault();
         let id = $('body > div > div:nth-child(4) > form:nth-child(5) > input:nth-child(1)').val();
         let user = $('body > div > div:nth-child(4) > form:nth-child(5) > input:nth-child(2)').val();
-        fetch(`https://localhost:5000/api/users/${id}/${user}`, {
+        fetch(`https://mleal-heroku-app.herokuapp.com/api/api/users/${id}/${user}`, {
           method: 'PUT',
         })
         .then(response => response.json() )
