@@ -39,11 +39,28 @@
         <H4>Try the API with the following UI:</H4>
 
         <form action="/api" method="post">
-          <input type="text" name="user" placeholder="Your Name">
-          <input type="submit" name="action" value="POST">
-          <input type="submit" name="action" value="GET">
-          <input type="submit" name="action" value="PUT" disabled>
-          <input type="submit" name="action" value="DELETE" disabled>
+          <input 
+            class="form-control" 
+            style="display: inline-block; width: 15%;"
+            type="text" name="user" placeholder="Your Name">
+          <input class="btn" type="submit" name="action" value="POST">
+          <input class="btn" type="submit" name="action" value="GET">
+        </form><br>
+
+
+        <form method="get">
+          <input 
+            class="form-control" 
+            style="display: inline-block; width: 15%;"
+            type="text" name="id" placeholder="Id">
+          <input 
+            class="form-control" 
+            style="display: inline-block; width: 15%;"
+            type="text"  name="user" placeholder="Name">
+          <button id="button-post" class="btn">POST</button>
+          <button id="button-delete" class="btn" disabled>DELETE</button>
+          <output id=output></output>
+
         </form><br>
         <% if (maxResults) { %>
           <p>GET will only show first <%= maxResults %> users.</p>
@@ -60,6 +77,31 @@
 
 
     </div>
+    <% include ../partials/scripts.ejs %>
+    <script>
+      var post = $('#button-post');
+
+      let updateResult = (id, name) => {
+        let $output = $('#output');
+        $output.text(`You just changed user with id:${id} to ${name}`);
+      }
+
+      post.on('click', function(e) {
+        e.preventDefault();
+        let id = $('body > div > div:nth-child(4) > form:nth-child(5) > input:nth-child(1)').val();
+        let user = $('body > div > div:nth-child(4) > form:nth-child(5) > input:nth-child(2)').val();
+        fetch(`http://localhost:5000/api/users/${id}/${user}`, {
+          method: 'PUT',
+        })
+        .then(response => response.json() )
+        .then( json => {
+          let updatedUser = json.find( element => element.id === 100);
+          let id = updatedUser.id;
+          let name = updatedUser.name;
+          return updateResult(id, name);
+        })
+      });
+    </script>
   </body>
 </html>
 
