@@ -122,8 +122,6 @@ module.exports = function (app, express) {
 
   app.post('/api', function (req, res) {
     res.locals.maxResults = undefined;
-    console.log('req.body.action ', req.body.action);
-    console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
       createUser(req, res).then(function (response) {
         var lastUser = [];
