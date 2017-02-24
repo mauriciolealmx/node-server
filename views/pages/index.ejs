@@ -1,41 +1,36 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <% include ../partials/header.ejs %>
-</head>
-
-<body>
-
-  <% include ../partials/nav.ejs %>
-
-<div class="jumbotron text-center">
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body>
+    <% include ../partials/nav.ejs %>
+  <div class="jumbotron text-center">
+    <div class="container">
+      <a href="/" class="lang-logo"><img src="/lang-logo.png"></a>
+      <h1>Node JS API</h1>
+      <p>This is a sample Node application deployed to Heroku.</p>
+      <p>On this app you can find a REST API. The Node endpoint is available at the following URI: <code class="uri">/api/users</code>The API persists data in a PostgreSQL database.<br> For more information go to <a href="/api"><strong style="text-decoration: none; color: #d9ccee;">Users API</strong></a> on the navigation menu.</p>
+    
+      <!-- <a type="button" class="btn btn-lg btn-default" formmethod="post" action="/login"><span class="glyphicon glyphicon-flash"></span> LOGIN</a>
+      <a type="button" class="btn btn-lg btn-default" href="/app"><span class="glyphicon glyphicon-flash"></span> Form Example</a> -->
+      <a type="button" class="btn btn-lg btn-primary" href="https://github.com/mauriciolealmx/node-server"><span class="glyphicon glyphicon-download"></span> Source on GitHub</a>
+    </div>
+  </div>
   <div class="container">
-    <a href="/" class="lang-logo">
-      <img src="/lang-logo.png">
-    </a>
-    <h1>Node JS API</h1>
-    <p>This is a sample Node application deployed to Heroku.</p>
-    <p>On this app you can find a REST API. The Node endpoint is available at the following URI: <code class="uri">/api/users</code>The API persists data in a PostgreSQL database.<br> For more information go to <a href="/api"><strong style="text-decoration: none; color: #d9ccee;">Users API</strong></a> on the navigation menu.</p>
-  
-<!--     <a type="button" class="btn btn-lg btn-default" formmethod="post" action="/login"><span class="glyphicon glyphicon-flash"></span> LOGIN</a>
-    <a type="button" class="btn btn-lg btn-default" href="/app"><span class="glyphicon glyphicon-flash"></span> Form Example</a> -->
-    <a type="button" class="btn btn-lg btn-primary" href="https://github.com/mauriciolealmx/node-server"><span class="glyphicon glyphicon-download"></span> Source on GitHub</a>
+    <div class="alert alert-info text-center" role="alert">
+        
+      <p>This app still has tons of work to be done. It is being developed and maintained by: MauricioLealMX.</p>
+      <p>Get in touch</p>
+      <ul class="contact-info">
+        <li>E-mail: <a href="mailto:mauriciolealmx@gmail.com?subject=Hi Mauricio" target="_blank">Mauricio Leal</a></li>
+        <li>Visit web profile: <a href="http://mauriciolealmx.com">http://mauriciolealmx.com</a></li>
+        <li>GitHub user: <a href="https://github.com/mauriciolealmx">https://github.com/mauriciolealmx</a></li>
+        <li>LinkedIn: <a href="https://www.linkedin.com/in/mauriciolealmx">https://www.linkedin.com/in/mauriciolealmx</a></li>
+      </ul>
+        
+    </div>
   </div>
-</div>
-<div class="container">
-  <div class="alert alert-info text-center" role="alert">
-      
-    <p>This app still has tons of work to be done. It is being developed and maintained by: MauricioLealMX.</p>
-    <p>Get in touch</p>
-    <ul class="contact-info">
-      <li>E-mail: <a href="mailto:mauriciolealmx@gmail.com?subject=Hi Mauricio" target="_blank">Mauricio Leal</a></li>
-      <li>Visit web profile: <a href="http://mauriciolealmx.com">http://mauriciolealmx.com</a></li>
-      <li>GitHub user: <a href="https://github.com/mauriciolealmx">https://github.com/mauriciolealmx</a></li>
-      <li>LinkedIn: <a href="https://www.linkedin.com/in/mauriciolealmx">https://www.linkedin.com/in/mauriciolealmx</a></li>
-    </ul>
-      
-  </div>
-</div>
-
-</body>
+    <% include ../partials/scripts.ejs %>
+  </body>
 </html>
