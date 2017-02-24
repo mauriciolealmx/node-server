@@ -35,15 +35,15 @@
       </code>
       </div>
       <div style="margin-bottom: 40px;">
-        <h4><b>----- The following functionallity is under contruction ----</b></h4>
+        <h4><code style="color: white; background-color: #f0ad4e;">----- The following functionallity is under contruction ----</code></h4>
         <H4>Try the API with the following UI:</H4>
 
         <form action="/api" method="post">
           <input type="text" name="user" placeholder="Your Name">
           <input type="submit" name="action" value="POST">
           <input type="submit" name="action" value="GET">
-          <input type="submit" name="action" value="PUT">
-          <input type="submit" name="action" value="DELETE">
+          <input type="submit" name="action" value="PUT" disabled>
+          <input type="submit" name="action" value="DELETE" disabled>
         </form><br>
         <% if (maxResults) { %>
           <p>GET will only show first <%= maxResults %> users.</p>
