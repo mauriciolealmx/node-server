@@ -71,6 +71,38 @@ var getUsers = function getUsers() {
     });
   });
 };
+var updateUser = function updateUser(req, res) {
+  return new _bluebird2.default(function (resolve, reject) {
+    var results = [];
+    // Grab data from the URL parameters
+    var id = req.params.user_id;
+    var name = req.params.user_name;
+    var data = { name: name };
+    // Grab data from http request
+    // Get a Postgres client from the connection pool
+    _pg2.default.connect(connectionString, function (err, client, done) {
+      // Handle connection errors
+      if (err) {
+        done();
+        console.log(err);
+        return res.status(500).json({ success: false, data: err });
+      }
+      // SQL Query > Update Data
+      client.query('UPDATE users SET name=($1) WHERE id=($2)', [data.name, id]);
+      // SQL Query > Select Data
+      var query = client.query("SELECT * FROM users ORDER BY id ASC");
+      // Stream results back one row at a time
+      query.on('row', function (row) {
+        results.push(row);
+      });
+      // After all data is returned, close connection and return results
+      query.on('end', function () {
+        done();
+        return resolve(results);
+      });
+    });
+  });
+};
 
 module.exports = function (app, express) {
 
@@ -90,7 +122,6 @@ module.exports = function (app, express) {
 
   app.post('/api', function (req, res) {
     res.locals.maxResults = undefined;
-
     console.log('req.body.action ', req.body.action);
     console.log('req.body.user ', req.body.user);
     if (req.body.action === 'POST') {
@@ -128,33 +159,11 @@ module.exports = function (app, express) {
     });
   });
 
-  app.put('/api/users/:user_id', function (req, res, next) {
-    var results = [];
-    // Grab data from the URL parameters
+  app.put('/api/users/:user_id/:user_name', function (req, res, next) {
     var id = req.params.user_id;
-    // Grab data from http request
-    var data = { name: req.body.user };
-    // Get a Postgres client from the connection pool
-    _pg2.default.connect(connectionString, function (err, client, done) {
-      // Handle connection errors
-      if (err) {
-        done();
-        console.log(err);
-        return res.status(500).json({ success: false, data: err });
-      }
-      // SQL Query > Update Data
-      client.query('UPDATE users SET name=($1) WHERE id=($2)', [data.name, id]);
-      // SQL Query > Select Data
-      var query = client.query("SELECT * FROM users ORDER BY id ASC");
-      // Stream results back one row at a time
-      query.on('row', function (row) {
-        results.push(row);
-      });
-      // After all data is returned, close connection and return results
-      query.on('end', function () {
-        done();
-        return res.json(results);
-      });
+
+    updateUser(req, res).then(function (response) {
+      return res.json(response);
     });
   });
 
