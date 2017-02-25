@@ -57,7 +57,7 @@
             class="form-control" 
             style="display: inline-block; width: 15%;"
             type="text"  name="user-name" placeholder="Name">
-          <button id="button-post" class="btn">POST</button>
+          <button id="button-post" class="btn">PUT</button>
           <button id="button-delete" class="btn" disabled>DELETE</button>
           <output id=output></output>
 
@@ -83,7 +83,7 @@
 
       let updateResult = (id, name) => {
         let $output = $('#output');
-        $output.text(`You just changed user with id:${id} to ${name}`);
+        $output.text(`You just changed user with id: ${id} to ${name}`);
       }
 
       let getValue = (selector) => {
