@@ -161,7 +161,10 @@ module.exports = function (app, express) {
     var id = req.params.user_id;
 
     updateUser(req, res).then(function (response) {
-      return res.json(response);
+      var updatedUser = response.find(function (element) {
+        return element.id === +id;
+      });
+      return res.json(updatedUser);
     });
   });
 

@@ -99,9 +99,9 @@
           method: 'POST'
         })
         .then( response => response.json() )
-        .then( json => {
-          let id = getValue('input[name="id"]');
-          let updatedUser = json.find( (element) => element.id === +id);
+        .then( updatedUser => {
+          console.log(updatedUser);
+          let id = updatedUser.id;
           let name = updatedUser.name;
           return updateResult(id, name);
         });

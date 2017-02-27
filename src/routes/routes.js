@@ -150,7 +150,8 @@ module.exports = function (app, express) {
     const id = req.params.user_id;
 
     updateUser(req, res).then( (response) => {
-      return res.json(response);
+      let updatedUser = response.find( (element) => element.id === +id);
+      return res.json(updatedUser);
     });
   });
 
